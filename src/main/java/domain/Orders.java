@@ -2,6 +2,8 @@ package domain;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -11,6 +13,12 @@ public class Orders {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
   private NewMember member;
+  @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
+  private List<OrderItem> ordersItems = new ArrayList<>();
+
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "delivery_id")
+  private Delivery delivery;
   @Column(name = "order_date")
   private LocalDate orderDate;
 

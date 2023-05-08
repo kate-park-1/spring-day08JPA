@@ -1,39 +1,45 @@
-import domain.*;
+import domain.Child;
+import domain.Parent;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.time.LocalDate;
 
-public class Member_Order_Create {
+public class OrphanRemoveTest {
   public static void main(String[] args) {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPASample");
     EntityManager em = emf.createEntityManager();
     EntityTransaction tx = em.getTransaction();
-    System.out.println("멤버 - 주문 : 생성 트랜잭션 시작");
+    System.out.println("orphan removel 트랜잭션 시작");
 
     try {
       tx.begin();
-      NewMember member = new NewMember();
-      member.setName("member1");
+      Child c1 = new Child();
+      c1.setName("c1");
+      Child c2 = new Child();
+      c2.setName("c2");
 
-      Address address = new Address("Seoul", "Doksan", "11111");
+      Parent p = new Parent();
+      p.setName("p");
+      p.addChild(c1);
+      p.addChild(c2);
 
-      Orders order = new Orders();
-      order.setMember(member);
-      order.setOrderDate(LocalDate.now());
-      order.setStatus(OrderStatus.ORDER);
+      em.persist(p);
+      em.persist(c1);
+      em.persist(c2);
 
-      member.orders.add(order);
+      em.flush();
+      em.clear();
 
-      em.persist(member);
-      em.persist(order);
+      //Parent parent1 = em.find(Parent.class, p.getId());
+      System.out.println(p.getChildList().size());
+      p.getChildList().remove(0); //자식 엔티티를 컬렉션에서 제거
 
-      System.out.println(member.orders.size());
+      em.remove(p);
 
       System.out.println("비영속 상태 --------");
-      System.out.println("영속 상태 --------");
+
       System.out.println("커밋 전 --------");
       tx.commit();
       System.out.println("커밋 후 --------");
@@ -42,7 +48,7 @@ public class Member_Order_Create {
       tx.rollback();
     } finally {
       em.close();
+      emf.close();
     }
-    emf.close();
   }
 }

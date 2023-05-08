@@ -40,7 +40,7 @@ public class CascadeTest {
       System.out.println("p, child 생성 후 --------" + parentList.get(0).getChildList().size());
 
       em.remove(p);
-
+      System.out.println("JPQL 실행 전 --------");
       List<Child> childList = em.createQuery("select c from Child c", Child.class).getResultList();
       System.out.println("p 삭제 후 --------" + childList.size());
 

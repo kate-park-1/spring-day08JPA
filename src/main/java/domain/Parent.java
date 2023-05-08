@@ -9,7 +9,7 @@ public class Parent {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
-  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
   List<Child> childList = new ArrayList<Child>();
 
   public void addChild(Child child) {
